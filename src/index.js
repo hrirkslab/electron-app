@@ -12,6 +12,7 @@ function App() {
   });
   const [tasks, setTasks] = useState([]);
   const [username, setUsername] = useState(localStorage.getItem('username') || '');
+  const [inputUsername, setInputUsername] = useState(''); // Separate state for username input
 
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
@@ -58,22 +59,21 @@ function App() {
     setUsername('');
   };
 
+  const handleLogin = () => {
+    if (inputUsername.trim()) {
+      localStorage.setItem('username', inputUsername);
+      setUsername(inputUsername);
+    }
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  };
+
+  // Conditional rendering based on whether the user is logged in
   if (!username) {
-    const [inputUsername, setInputUsername] = useState(''); // New state for the input field
-  
-    const handleLogin = () => {
-      if (inputUsername.trim()) {
-        localStorage.setItem('username', inputUsername);
-        setUsername(inputUsername); // Update the actual username only on login
-      }
-    };
-  
-    const handleKeyPress = (e) => {
-      if (e.key === 'Enter') {
-        handleLogin();
-      }
-    };
-  
     return (
       <div className="App">
         <div className="max-w-sm mx-auto my-8">
@@ -81,8 +81,8 @@ function App() {
           <input
             type="text"
             id="username"
-            value={inputUsername} // Bind the input to the new state
-            onChange={(e) => setInputUsername(e.target.value)} // Update the new state on change
+            value={inputUsername} // Use inputUsername for the input field
+            onChange={(e) => setInputUsername(e.target.value)} // Update inputUsername
             onKeyPress={handleKeyPress}
             placeholder="Enter your username"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -97,8 +97,8 @@ function App() {
       </div>
     );
   }
-  
 
+  // If the user is logged in, render the task management interface
   return (
     <div className="App container mx-auto p-4">
       <div className="mb-4">
@@ -192,7 +192,7 @@ function App() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <button onClick={() => handleRemoveTask(task.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-3 rounded focus:outline-none focus:shadow-outline">
+              <button onClick={() => handleRemoveTask(task.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">
                 Remove
               </button>
             </div>
