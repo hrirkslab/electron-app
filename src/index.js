@@ -59,6 +59,21 @@ function App() {
   };
 
   if (!username) {
+    const [inputUsername, setInputUsername] = useState(''); // New state for the input field
+  
+    const handleLogin = () => {
+      if (inputUsername.trim()) {
+        localStorage.setItem('username', inputUsername);
+        setUsername(inputUsername); // Update the actual username only on login
+      }
+    };
+  
+    const handleKeyPress = (e) => {
+      if (e.key === 'Enter') {
+        handleLogin();
+      }
+    };
+  
     return (
       <div className="App">
         <div className="max-w-sm mx-auto my-8">
@@ -66,17 +81,14 @@ function App() {
           <input
             type="text"
             id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            value={inputUsername} // Bind the input to the new state
+            onChange={(e) => setInputUsername(e.target.value)} // Update the new state on change
+            onKeyPress={handleKeyPress}
             placeholder="Enter your username"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
           />
           <button
-            onClick={() => {
-              if (username.trim()) {
-                localStorage.setItem('username', username);
-              }
-            }}
+            onClick={handleLogin}
             className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           >
             Login
@@ -85,6 +97,7 @@ function App() {
       </div>
     );
   }
+  
 
   return (
     <div className="App container mx-auto p-4">
