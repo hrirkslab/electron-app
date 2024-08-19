@@ -10,6 +10,5 @@
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  // other properties
+  }
 }
