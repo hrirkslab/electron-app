@@ -1,206 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import ReactDOM from 'react-dom';
-import './App.css';
+import TaskForm from './TaskForm'
+import TaskList from './TaskList';
+import Filters from './Filters';
+import './App.css'; // Assuming custom CSS for styling
 
-function App() {
-  const [task, setTask] = useState({
-    description: '',
-    date: new Date().toISOString().split('T')[0], // Default to today's date
-    status: 'Task',
-    shift: 'FD',
-    relevancy: 0,
-  });
+const App = () => {
   const [tasks, setTasks] = useState([]);
-  const [username, setUsername] = useState(localStorage.getItem('username') || '');
-  const [inputUsername, setInputUsername] = useState(''); // Separate state for username input
+  const [filter, setFilter] = useState('all');
+  const [currentUser, setCurrentUser] = useState(localStorage.getItem('username') || '');
 
   useEffect(() => {
-    const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
-    setTasks(storedTasks);
+    if (localStorage.getItem('tasks')) {
+      setTasks(JSON.parse(localStorage.getItem('tasks')));
+    }
   }, []);
 
-  const handleAddTask = () => {
-    if (task.description.trim()) {
-      const newTask = {
-        ...task,
-        id: Date.now(),
-        endDate: calculateEndDate(task.date, task.relevancy),
-        createdBy: username,
-        done: false,
-        readBy: [],
-      };
-      const updatedTasks = [...tasks, newTask];
-      setTasks(updatedTasks);
-      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-      setTask({
-        description: '',
-        date: new Date().toISOString().split('T')[0],
-        status: 'Task',
-        shift: 'FD',
-        relevancy: 0,
-      });
-    }
+  const addTask = (task) => {
+    setTasks([...tasks, task]);
+    localStorage.setItem('tasks', JSON.stringify([...tasks, task]));
   };
 
-  const handleRemoveTask = (id) => {
-    const updatedTasks = tasks.filter((task) => task.id !== id);
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+  const filterTasks = (filter) => {
+    setFilter(filter);
   };
 
-  const calculateEndDate = (date, relevancy) => {
-    const endDate = new Date(date);
-    endDate.setDate(endDate.getDate() + relevancy);
-    return endDate.toISOString().split('T')[0];
+  const filteredTasks = tasks.filter(task => {
+    if (filter === 'all') return true;
+    if (filter === 'todo') return task.status === 'Task' && !task.done;
+    if (filter === 'info') return task.status === 'Info';
+    if (filter === 'done') return task.done;
+    return true;
+  });
+
+  const handleLogin = (username) => {
+    setCurrentUser(username);
+    localStorage.setItem('username', username);
   };
 
   const handleLogout = () => {
+    setCurrentUser('');
     localStorage.removeItem('username');
-    setUsername('');
   };
 
-  const handleLogin = () => {
-    if (inputUsername.trim()) {
-      localStorage.setItem('username', inputUsername);
-      setUsername(inputUsername);
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleLogin();
-    }
-  };
-
-  // Conditional rendering based on whether the user is logged in
-  if (!username) {
-    return (
-      <div className="App">
-        <div className="max-w-sm mx-auto my-8">
-          <label htmlFor="username" className="block text-gray-700 text-sm font-bold mb-2">Username</label>
-          <input
-            type="text"
-            id="username"
-            value={inputUsername} // Use inputUsername for the input field
-            onChange={(e) => setInputUsername(e.target.value)} // Update inputUsername
-            onKeyPress={handleKeyPress}
-            placeholder="Enter your username"
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          />
-          <button
-            onClick={handleLogin}
-            className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          >
-            Login
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  // If the user is logged in, render the task management interface
   return (
-    <div className="App container mx-auto p-4">
-      <div className="mb-4">
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">Welcome, {username}</h1>
-        <button onClick={handleLogout} className="mb-4 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Logout</button>
-      </div>
-
-      <div className="mb-4">
-        <input
-          type="text"
-          value={task.description}
-          onChange={(e) => setTask({ ...task, description: e.target.value })}
-          placeholder="Task Description"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="task-date" className="block text-gray-700 text-sm font-bold mb-2">Date</label>
-        <input
-          type="date"
-          value={task.date}
-          onChange={(e) => setTask({ ...task, date: e.target.value })}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="task-status" className="block text-gray-700 text-sm font-bold mb-2">Status</label>
-        <select
-          value={task.status}
-          onChange={(e) => setTask({ ...task, status: e.target.value })}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        >
-          <option value="Info">Info</option>
-          <option value="Task">Task</option>
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="task-shift" className="block text-gray-700 text-sm font-bold mb-2">Shift</label>
-        <select
-          value={task.shift}
-          onChange={(e) => setTask({ ...task, shift: e.target.value })}
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        >
-          <option value="FD">Frühdienst</option>
-          <option value="SD">Spätdienst</option>
-          <option value="ND">Nachtdienst</option>
-          <option value="ALLE">ALLE</option>
-        </select>
-      </div>
-
-      <div className="mb-4">
-        <label htmlFor="task-relevancy" className="block text-gray-700 text-sm font-bold mb-2">Relevancy (days)</label>
-        <input
-          type="number"
-          value={task.relevancy}
-          onChange={(e) => setTask({ ...task, relevancy: e.target.value })}
-          placeholder="Enter relevancy days"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-        />
-      </div>
-
-      <button onClick={handleAddTask} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Add Task
-      </button>
-
-      <ul className="space-y-4 mt-6">
-        {tasks.map((task, index) => (
-          <li key={task.id} className={`bg-white shadow-md rounded-lg p-4 flex justify-between items-start border-l-4 ${task.status === 'Info' ? 'border-yellow-500' : 'border-blue-500'} ${task.done ? 'opacity-50' : ''}`}>
-            <div className="flex-1">
-              <h3 className={`text-lg font-semibold mb-2 ${task.done ? 'line-through' : ''}`}>{task.description}</h3>
-              <div className="text-sm text-gray-500 space-y-1">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <span>{task.date}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span>{task.endDate}</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <span>{task.shift}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <span>{task.status}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <button onClick={() => handleRemoveTask(task.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline">
-                Remove
-              </button>
-            </div>
-          </li>
-        ))}
-      </ul>
+    <div className="app-container">
+      {!currentUser ? (
+        <Login handleLogin={handleLogin} />
+      ) : (
+        <div>
+          <header>
+            <h1>Welcome, {currentUser}</h1>
+            <button onClick={handleLogout}>Logout</button>
+          </header>
+          <TaskForm addTask={addTask} />
+          <Filters filterTasks={filterTasks} />
+          <TaskList tasks={filteredTasks} />
+        </div>
+      )}
     </div>
   );
-}
+};
 
-ReactDOM.render(<App />, document.getElementById('root'));
+export default App;
