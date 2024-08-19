@@ -2,7 +2,7 @@
   "name": "shift-todo",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://<your-username>.github.io/<your-repo-name>",
+  "homepage": "https://hrirkslab.github.io/shift-todo",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -10,5 +10,8 @@
     "deploy": "gh-pages -d build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "react-scripts": "4.0.3"
   }
 }
