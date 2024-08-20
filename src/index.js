@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
+import SupabaseService from './SupaBaseService';
 import './App.css';
 
 function App() {
@@ -14,6 +15,23 @@ function App() {
   const [username, setUsername] = useState(localStorage.getItem('username') || '');
   const [inputUsername, setInputUsername] = useState(''); // Separate state for username input
   const [filter, setFilter] = useState('all');
+
+  // db connection
+  const supabaseUrl = process.env.REACT_APP_SUPABASE_URL;
+  const supabaseAnonKey = process.env.REACT_APP_SUPABASE_ANON_KEY;
+
+
+  const supabaseService = new SupabaseService(supabaseUrl, supabaseAnonKey);
+
+  const dataToSave = {
+    name: 'John Doe',
+    email: 'johndoe@example.com',
+  };
+
+  supabaseService.saveData('test_data', dataToSave)
+    .then(data => console.log('Data saved:', data))
+    .catch(error => console.error('Error saving data:', error));
+  // eof db conn
 
   useEffect(() => {
     const storedTasks = JSON.parse(localStorage.getItem('tasks')) || [];
@@ -271,4 +289,11 @@ function App() {
   );
 }
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const rootElement = document.getElementById('root');
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
