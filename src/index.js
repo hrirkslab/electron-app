@@ -146,7 +146,7 @@ function App() {
       </div>
 
       {/* Task input form */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <input
           type="text"
           value={task.description}
@@ -202,41 +202,41 @@ function App() {
       {/* Task list */}
       <ul className="space-y-4">
         {filteredTasks.map((task) => (
-          <li key={task.id} className={`bg-white shadow-md rounded-lg p-4 flex justify-between items-start border-l-4 ${task.status === 'Info' ? 'border-yellow-500' : 'border-blue-500'} ${task.done ? 'opacity-50' : ''}`}>
-            <div className="flex-1">
-              <h3 className={`text-lg font-semibold mb-2 ${task.done ? 'line-through' : ''}`}>{task.description}</h3>
-              <div className="text-sm text-gray-500 space-y-1">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-calendar-alt"></i>
-                    <span>{task.date}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-calendar-check"></i>
-                    <span>{task.endDate}</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-clock"></i>
-                    <span>{task.shift}</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <i className="fas fa-info-circle"></i>
-                    <span>{task.status}</span>
-                  </div>
+          <li key={task.id} className={`bg-white shadow-md rounded-lg p-4 flex flex-col border-l-4 ${task.status === 'Info' ? 'border-yellow-500' : 'border-blue-500'} ${task.done ? 'opacity-50' : ''}`}>
+            <h3 className={`text-lg font-semibold mb-2 ${task.done ? 'line-through' : ''}`}>{task.description}</h3>
+            <div className="text-sm text-gray-500 space-y-1">
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <i className="fas fa-calendar-alt text-gray-400"></i>
+                  <span>{task.date}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <i className="fas fa-user"></i>
+                  <i className="fas fa-calendar-check text-gray-400"></i>
+                  <span>{task.endDate}</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <i className="fas fa-clock text-gray-400"></i>
+                  <span>{task.shift}</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <i className={`fas ${task.status === 'Info' ? 'fa-info-circle' : 'fa-tasks'} text-gray-400`}></i>
+                  <span>{task.status}</span>
+                </div>
+              </div>
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-2">
+                  <i className="fas fa-user text-gray-400"></i>
                   <span>{task.createdBy}</span>
                 </div>
                 <div className="flex items-center space-x-2">
-                  <i className="fas fa-eye"></i>
+                  <i className="fas fa-eye text-gray-400"></i>
                   <span>{task.readBy.length > 0 ? task.readBy.join(", ") : "No one yet"}</span>
                 </div>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
+            <div className="flex items-center justify-end space-x-2">  {/* Modified line */}
               {!task.readBy.includes(username) && (
                 <button onClick={() => handleMarkAsRead(task.id)} className="text-blue-500 hover:text-blue-700">
                   <i className="fas fa-eye"></i>
