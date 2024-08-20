@@ -1,13 +1,15 @@
 {
   "files": {
     "main.css": "/shift-todo/static/css/main.b5a22d4e.css",
-    "main.js": "/shift-todo/static/js/main.a219e0f4.js",
+    "main.js": "/shift-todo/static/js/main.f4a5e29a.js",
+    "static/js/198.824ffd20.chunk.js": "/shift-todo/static/js/198.824ffd20.chunk.js",
     "index.html": "/shift-todo/index.html",
     "main.b5a22d4e.css.map": "/shift-todo/static/css/main.b5a22d4e.css.map",
-    "main.a219e0f4.js.map": "/shift-todo/static/js/main.a219e0f4.js.map"
+    "main.f4a5e29a.js.map": "/shift-todo/static/js/main.f4a5e29a.js.map",
+    "198.824ffd20.chunk.js.map": "/shift-todo/static/js/198.824ffd20.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.b5a22d4e.css",
-    "static/js/main.a219e0f4.js"
+    "static/js/main.f4a5e29a.js"
   ]
 }
